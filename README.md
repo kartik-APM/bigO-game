@@ -132,7 +132,7 @@ src/
   lib/ranked.ts            ranked-run calls and player-facing error messages
   auth/AuthProvider.tsx    Google sign-in state for the session bar
   components/              Hero, Game, CodeView, Leaderboard, CheatSheet, Method, Faq, …
-  styles.css               terminal theme (design tokens in :root)
+  styles.css               playful geometric theme (design tokens in :root)
 scripts/check-snippets.mjs compiles every snippet in every language
 scripts/gen-answers-sql.mjs builds supabase/answers.sql from snippet metadata
 supabase/migrations/       database schema, RLS and triggers
@@ -194,14 +194,22 @@ toolchain is skipped locally with a warning but fails the run in CI.
 
 ## Design
 
-The UI follows a terminal style: IBM Plex Mono (loaded under the `TerminalPlex`
-alias), green on black, with white reserved for emphasis. Sections are laid out
-as numbered commands, each followed by its output. Spacing and widths are
-measured in character units. The tokens live at the top of `src/styles.css`.
-It respects `prefers-reduced-motion`, keeps focus visible, and has no
-horizontal scrolling down to 375 px wide.
+The UI follows a "playful geometric" style: warm paper background, white
+book-shaped panels with a violet offset backing and a coloured number tab, and
+violet, pink, amber and mint accents. Headings use Host Grotesk and body text
+uses Instrument Sans, loaded under the `PlayfulGeometricDisplay` and
+`PlayfulGeometricReading` aliases; code stays in IBM Plex Mono so characters
+line up. Buttons are rounded and outlined, with a hard offset shadow; they lift
+slightly on hover and sink when pressed. The opening shapes are decorative and
+hidden from screen readers.
+
+The design tokens live at the top of `src/styles.css`. The layout narrows at
+1100 px and stacks at 760 px. It respects `prefers-reduced-motion` (no
+transitions or lifts), keeps keyboard focus visible outside the shadows, and has
+no horizontal scrolling down to 375 px wide.
 
 ## Credits
 
-All snippets and explanations are original to this project. The font is
-IBM Plex Mono, licensed under the SIL Open Font License.
+All snippets and explanations are original to this project. The fonts are
+Host Grotesk, Instrument Sans and IBM Plex Mono, all licensed under the SIL
+Open Font License.

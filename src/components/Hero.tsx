@@ -3,7 +3,7 @@ import { LANGS } from '../data/types';
 import { SNIPPETS } from '../data/snippets';
 import { START_LIVES } from '../game/engine';
 import type { MyBest } from '../lib/leaderboard';
-import { Wordmark } from './Wordmark';
+import { Shapes } from './Shapes';
 
 interface Props {
   /** best practice score saved in this browser */
@@ -16,13 +16,10 @@ interface Props {
 export function Hero({ practiceBest, signedIn, rankedBest }: Props) {
   return (
     <section className="hero" aria-labelledby="title">
-      <span className="cmd__num" aria-hidden="true" />
       <div className="hero__body">
-        <div>
-          <Wordmark text="BIG O" />
+        <div className="hero__text">
           <h1 id="title">
             Big O <strong>Drill</strong>
-            <span className="cursor" aria-hidden="true" />
           </h1>
           <p className="lede">
             Read a snippet and name its time complexity before the timer runs out. A streak of
@@ -38,44 +35,45 @@ export function Hero({ practiceBest, signedIn, rankedBest }: Props) {
             </a>
           </div>
         </div>
-        <dl className="facts" aria-label="at a glance">
-          <div>
-            <dt>snippets</dt>
-            <dd>{SNIPPETS.length}</dd>
-          </div>
-          <div>
-            <dt>languages</dt>
-            <dd>{LANGS.length}</dd>
-          </div>
-          <div>
-            <dt>classes</dt>
-            <dd>{COMPLEXITIES.length}</dd>
-          </div>
-          <div>
-            <dt>lives</dt>
-            <dd>{START_LIVES}</dd>
-          </div>
-          {signedIn ? (
-            <div>
-              <dt>ranked best</dt>
-              <dd>
-                {rankedBest === null ? (
-                  '–'
-                ) : (
-                  <>
-                    <strong>{rankedBest.score.toLocaleString()}</strong> · #{rankedBest.rank}
-                  </>
-                )}
-              </dd>
-            </div>
-          ) : (
-            <div>
-              <dt>your best</dt>
-              <dd>{practiceBest === null ? '–' : <strong>{practiceBest.toLocaleString()}</strong>}</dd>
-            </div>
-          )}
-        </dl>
+        <Shapes />
       </div>
+      <dl className="facts" aria-label="at a glance">
+        <div>
+          <dt>snippets</dt>
+          <dd>{SNIPPETS.length}</dd>
+        </div>
+        <div>
+          <dt>languages</dt>
+          <dd>{LANGS.length}</dd>
+        </div>
+        <div>
+          <dt>classes</dt>
+          <dd>{COMPLEXITIES.length}</dd>
+        </div>
+        <div>
+          <dt>lives</dt>
+          <dd>{START_LIVES}</dd>
+        </div>
+        {signedIn ? (
+          <div>
+            <dt>ranked best</dt>
+            <dd>
+              {rankedBest === null ? (
+                '–'
+              ) : (
+                <>
+                  <strong>{rankedBest.score.toLocaleString()}</strong> · #{rankedBest.rank}
+                </>
+              )}
+            </dd>
+          </div>
+        ) : (
+          <div>
+            <dt>your best</dt>
+            <dd>{practiceBest === null ? '–' : <strong>{practiceBest.toLocaleString()}</strong>}</dd>
+          </div>
+        )}
+      </dl>
     </section>
   );
 }

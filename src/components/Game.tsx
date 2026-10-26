@@ -244,7 +244,7 @@ export function Game({ scores, onScores, onRankedFinished }: Props) {
           <p className="game__hint">
             <span className="muted">Sign in to play ranked runs that count on the leaderboard. </span>
             <button type="button" className="blink blink--button" onClick={() => void signIn()}>
-              <span aria-hidden="true">[</span>sign in with google<span aria-hidden="true">]</span>
+              sign in with google
             </button>
           </p>
         )}
@@ -384,8 +384,7 @@ export function Game({ scores, onScores, onRankedFinished }: Props) {
           <dt>time</dt>
           <dd>
             <span aria-hidden="true" className="hud__bar">
-              [{'#'.repeat(filled)}
-              {'.'.repeat(BAR_WIDTH - filled)}]
+              <span className="hud__fill" style={{ width: `${(filled / BAR_WIDTH) * 100}%` }} />
             </span>{' '}
             {timeText}
           </dd>

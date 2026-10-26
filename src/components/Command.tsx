@@ -16,9 +16,6 @@ export function Command({ n, id, name, summary, children }: Props) {
       </span>
       <div className="cmd__body">
         <h2 id={`${id}-h`} className="cmd__line">
-          <span className="cmd__prompt" aria-hidden="true">
-            ${' '}
-          </span>
           {name}
         </h2>
         {summary && <p className="cmd__summary">{summary}</p>}

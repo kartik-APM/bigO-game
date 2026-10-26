@@ -18,9 +18,7 @@ function useSections() {
 export function BracketLink({ href, label }: { href: string; label: string }) {
   return (
     <a className="blink" href={href}>
-      <span aria-hidden="true">[</span>
       {label}
-      <span aria-hidden="true">]</span>
     </a>
   );
 }
@@ -28,9 +26,7 @@ export function BracketLink({ href, label }: { href: string; label: string }) {
 function BracketButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button type="button" className="blink blink--button" onClick={onClick}>
-      <span aria-hidden="true">[</span>
       {label}
-      <span aria-hidden="true">]</span>
     </button>
   );
 }
@@ -83,11 +79,11 @@ export function SessionBar() {
 export function Footer() {
   const sections = useSections();
   return (
+    <div className="cover">
     <footer className="foot">
-      <span className="cmd__num" aria-hidden="true" />
       <div className="foot__dirs">
         <div>
-          <h2 className="foot__head">./sections</h2>
+          <h2 className="foot__head">sections</h2>
           <ul>
             {sections.map((s) => (
               <li key={s.href}>
@@ -97,14 +93,15 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h2 className="foot__head">./notes</h2>
+          <h2 className="foot__head">notes</h2>
           <ul className="muted">
             <li>Scores are stored in this browser only.</li>
             <li>C++ and Java snippets are bare functions; includes, imports and using std are omitted.</li>
-            <li>Set in IBM Plex Mono (SIL Open Font License).</li>
+            <li>Set in Host Grotesk and Instrument Sans, with code in IBM Plex Mono (SIL Open Font License).</li>
           </ul>
         </div>
       </div>
     </footer>
+    </div>
   );
 }
