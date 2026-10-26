@@ -1,17 +1,17 @@
 import { displayName, useAuth } from '../auth/AuthProvider';
 
 const BASE_SECTIONS = [
-  { href: '#play', label: 'play' },
-  { href: '#cheat-sheet', label: 'cheat sheet' },
-  { href: '#method', label: 'method' },
-  { href: '#faq', label: 'faq' },
+  { href: '/play', label: 'play' },
+  { href: '/cheat-sheet', label: 'cheat sheet' },
+  { href: '/method', label: 'method' },
+  { href: '/faq', label: 'faq' },
 ];
 
 /** Section links; the leaderboard only exists when Supabase is configured. */
 function useSections() {
   const { enabled } = useAuth();
   return enabled
-    ? [BASE_SECTIONS[0], { href: '#leaderboard', label: 'leaderboard' }, ...BASE_SECTIONS.slice(1)]
+    ? [BASE_SECTIONS[0], { href: '/leaderboard', label: 'leaderboard' }, ...BASE_SECTIONS.slice(1)]
     : BASE_SECTIONS;
 }
 
@@ -57,7 +57,7 @@ export function SessionBar() {
   const sections = useSections();
   return (
     <header className="bar">
-      <a className="bar__name" href="#title">
+      <a className="bar__name" href="/">
         bigo-drill
       </a>
       <div className="bar__right">

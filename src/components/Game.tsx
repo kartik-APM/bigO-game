@@ -301,7 +301,7 @@ export function Game({ scores, onScores, onRankedFinished }: Props) {
         {isRanked ? (
           <p className="save__done">
             Scored on the server. Your best ranked run counts on the{' '}
-            <a href="#leaderboard">leaderboard</a>.
+            <a href="/leaderboard">leaderboard</a>.
           </p>
         ) : savedAt === null ? (
           <form className="save" onSubmit={save}>

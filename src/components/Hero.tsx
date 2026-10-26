@@ -27,10 +27,10 @@ export function Hero({ practiceBest, signedIn, rankedBest }: Props) {
             JavaScript and Java, and a cheat sheet for when you get stuck.
           </p>
           <div className="actions">
-            <a className="btn btn--primary" href="#play">
+            <a className="btn btn--primary" href="/play">
               start drilling
             </a>
-            <a className="btn" href="#cheat-sheet">
+            <a className="btn" href="/cheat-sheet">
               open cheat sheet
             </a>
           </div>

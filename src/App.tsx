@@ -10,6 +10,7 @@ import { Leaderboard } from './components/Leaderboard';
 import { Method } from './components/Method';
 import { loadScores } from './lib/scores';
 import { useMyBest } from './lib/useMyBest';
+import { useSectionRoutes } from './lib/useSectionRoutes';
 
 interface Section {
   id: string;
@@ -24,6 +25,7 @@ export default function App() {
   const { enabled: online, user } = useAuth();
   const practiceBest = scores[0]?.score ?? null;
   const rankedBest = useMyBest(boardVersion);
+  useSectionRoutes();
 
   const sections: Section[] = [
     {

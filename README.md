@@ -192,6 +192,30 @@ answer, or contains an unexpected file.
 Errors point at the real file, e.g. `snippets/gauss/code.cpp:4:21`. A missing
 toolchain is skipped locally with a warning but fails the run in CI.
 
+## URLs and deploying
+
+The site is one page, but each section has its own address: `/play`,
+`/leaderboard`, `/cheat-sheet`, `/method` and `/faq` (`/` is the top). Opening
+one directly scrolls to that section. Nav links change the address without a
+reload, and back/forward move between sections. Old `#section` links are
+rewritten to the path form, and unknown paths fall back to `/`. The hook lives
+in `src/lib/useSectionRoutes.ts` and uses only the browser's History API, with
+no router dependency.
+
+Sign-in uses Supabase's PKCE flow, so no tokens appear in the address bar, and
+you return to the section you signed in from.
+
+`netlify.toml` holds the Netlify build settings (`npm run build`, publish
+`dist`, Node 20) and a rule that serves `index.html` for every path, so
+`/leaderboard` works on a fresh load. When deploying:
+
+1. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Netlify. Don't mark
+   them secret: they're public, and they're built into the site's JavaScript.
+2. Add `https://<your-site>.netlify.app/**` to Supabase → Authentication → URL
+   Configuration → Redirect URLs, and make that address the Site URL.
+3. Add `https://<your-site>.netlify.app` to the Google OAuth client's authorised
+   JavaScript origins.
+
 ## Design
 
 The UI follows a "playful geometric" style: warm paper background, white
