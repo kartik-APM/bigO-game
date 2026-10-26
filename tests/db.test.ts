@@ -3,15 +3,11 @@
 // (PGlite) with small stand-ins for Supabase's auth schema and client roles,
 // then checks triggers, row-level security, grants and constraints.
 
-import { PGlite } from '@electric-sql/pglite';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import { buildAnswersSql } from '../scripts/gen-answers-sql.mjs';
-
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const MIGRATIONS = join(ROOT, 'supabase', 'migrations');
+import type { PGlite } from '@electric-sql/pglite';
+import { ROOT, createSupabaseDb, type TestDb } from './support/supabase-db';
 
 const A = '00000000-0000-0000-0000-00000000000a';
 const B = '00000000-0000-0000-0000-00000000000b';
@@ -19,37 +15,21 @@ const C = '00000000-0000-0000-0000-00000000000c';
 const RUN_A = '10000000-0000-0000-0000-000000000001';
 const RUN_B = '20000000-0000-0000-0000-000000000002';
 
+let t: TestDb;
 let db: PGlite;
 let answers: string;
 
-const count = async (sql: string) => (await db.query<{ c: number }>(`select count(*)::int c from ${sql}`)).rows[0].c;
-const asUser = (sub: string) =>
-  db.exec(`reset role; set role authenticated; select set_config('request.jwt.claim.sub', '${sub}', false);`);
-const asAnon = () => db.exec(`reset role; set role anon; select set_config('request.jwt.claim.sub', '', false);`);
-const asAdmin = () => db.exec('reset role;');
+const count = (fromWhere: string) => t.count(fromWhere);
+const asUser = (sub: string) => t.asUser(sub);
+const asAnon = () => t.asAnon();
+const asAdmin = () => t.asAdmin();
 
 beforeAll(async () => {
-  db = new PGlite();
-  await db.exec(`
-    create role anon nologin;
-    create role authenticated nologin;
-    grant usage on schema public to anon, authenticated;
-    -- Supabase grants clients everything by default and relies on RLS; mirror that
-    alter default privileges in schema public grant all on tables to anon, authenticated;
-    alter default privileges in schema public grant all on functions to anon, authenticated;
-    create schema auth;
-    grant usage on schema auth to anon, authenticated;
-    create table auth.users (id uuid primary key, raw_user_meta_data jsonb not null default '{}');
-    create function auth.uid() returns uuid language sql stable as
-      $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
-    grant execute on function auth.uid() to anon, authenticated;
-    insert into auth.users values ('${A}', '{"full_name":"Ada","avatar_url":"https://x/a.png"}');
-  `);
-  for (const file of readdirSync(MIGRATIONS).sort()) {
-    await db.exec(readFileSync(join(MIGRATIONS, file), 'utf8'));
-  }
-  answers = buildAnswersSql();
-  await db.exec(answers);
+  // signed in before the migrations ran, to exercise the profile backfill
+  t = await createSupabaseDb(
+    `insert into auth.users values ('${A}', '{"full_name":"Ada","avatar_url":"https://x/a.png"}');`,
+  );
+  ({ db, answers } = t);
 }, 30_000);
 
 afterAll(() => db?.close());

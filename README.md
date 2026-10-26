@@ -57,8 +57,10 @@ not built yet; high scores are still local to the browser.
 The schema lives in `supabase/migrations/`, and the answer key in the
 generated `supabase/answers.sql`. Using the Supabase dashboard:
 
-1. Open **SQL Editor**, paste `supabase/migrations/20261026000100_schema.sql`
-   and run it once.
+1. Open **SQL Editor** and run each file in `supabase/migrations/` once, in
+   order:
+   - `20261026000100_schema.sql`: tables, row-level security, profile trigger
+   - `20261026000200_ranked_runs.sql`: the ranked-run functions
 2. Paste `supabase/answers.sql` and run it. Run it again whenever a
    `meta.json` changes, after regenerating it with `npm run db:answers`.
 
@@ -74,8 +76,24 @@ What the schema enforces:
 - Removing a snippet that past runs used makes `answers.sql` fail without
   changing anything, so run history is never orphaned.
 
-`tests/db.test.ts` applies the migration to an in-process Postgres
-([PGlite](https://pglite.dev)) and checks all of the above.
+Ranked play runs entirely in the database, through three functions that
+signed-in players call over Supabase RPC:
+
+| Function | What it does |
+| --- | --- |
+| `start_run(lang)` | Finishes any active run, shuffles the deck, returns question 1 (4 options, time limit) |
+| `submit_answer(run, n, choice)` | Times the answer on the server (with 300 ms grace for the network), scores it, and returns the answer and explanation plus the next question or the final score. `null` means the timer ran out. Repeating an answered question returns the same result. |
+| `end_run(run)` | Ends a run early, keeping its score |
+
+The scoring rules in SQL mirror `src/game/engine.ts`; a test checks that both
+give identical points for thousands of inputs. Runs with answers faster than a
+person can read (under 400 ms, or under 1 s on average) are flagged. Runs idle
+for 10 minutes are finished automatically, and each player can start up to 30
+runs an hour. Errors use PostgREST `PTxyz` codes, so the API responds with
+HTTP status `xyz` (for example `PT429 rate_limited`).
+
+`tests/db.test.ts` and `tests/db-ranked.test.ts` apply the migrations to an
+in-process Postgres ([PGlite](https://pglite.dev)) and check all of the above.
 
 ## Project layout
 

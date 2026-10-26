@@ -49,6 +49,10 @@ export const timeLimit = (answered: number) =>
 export const multiplier = (streak: number) =>
   Math.min(MAX_MULTIPLIER, 1 + Math.floor(streak / STREAK_STEP));
 
+/** Points for a correct answer. Mirrored by private.points() in the Supabase migration. */
+export const points = (remainingMs: number, limitMs: number, streak: number) =>
+  Math.round((BASE_POINTS + (SPEED_POINTS * Math.max(0, remainingMs)) / limitMs) * multiplier(streak));
+
 function shuffledDeck(avoidFirst?: number): number[] {
   const deck = SNIPPETS.map((_, i) => i);
   for (let i = deck.length - 1; i > 0; i--) {
@@ -125,9 +129,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const remaining = Math.max(0, state.limitMs - (action.now - state.startedAt));
       const ok = action.choice === currentSnippet(state).answer;
       if (ok) {
-        const gained = Math.round(
-          (BASE_POINTS + (SPEED_POINTS * remaining) / state.limitMs) * multiplier(state.streak),
-        );
+        const gained = points(remaining, state.limitMs, state.streak);
         const streak = state.streak + 1;
         return {
           ...state,
