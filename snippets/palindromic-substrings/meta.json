@@ -1,0 +1,5 @@
+{
+  "title": "count palindromic substrings",
+  "answer": "O(n²)",
+  "why": "There are 2n − 1 centres, and each can expand up to about n / 2 steps."
+}

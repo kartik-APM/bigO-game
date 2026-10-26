@@ -1,0 +1,5 @@
+{
+  "title": "binary search for every item",
+  "answer": "O(n log n)",
+  "why": "There are n lookups, and each is a binary search costing log n."
+}

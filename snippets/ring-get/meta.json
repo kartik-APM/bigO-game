@@ -1,0 +1,5 @@
+{
+  "title": "ring buffer read",
+  "answer": "O(1)",
+  "why": "Modular arithmetic finds the slot directly. Nothing walks the buffer."
+}

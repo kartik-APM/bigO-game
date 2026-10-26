@@ -1,0 +1,5 @@
+{
+  "title": "full pass per doubling width",
+  "answer": "O(n log n)",
+  "why": "The outer loop doubles width until it reaches n, about log n times, and each round is a full O(n) pass."
+}

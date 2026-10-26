@@ -1,0 +1,5 @@
+{
+  "title": "Euclid’s gcd",
+  "answer": "O(log n)",
+  "why": "The remainder at least halves every two steps, so the loop is logarithmic in the smaller input."
+}

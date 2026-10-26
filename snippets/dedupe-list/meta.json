@@ -1,0 +1,5 @@
+{
+  "title": "dedupe with a list membership test",
+  "answer": "O(n²)",
+  "why": "The membership test on a list (in, includes, contains, std::find) is a hidden linear scan, and it runs inside a loop over n items."
+}

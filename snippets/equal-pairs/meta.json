@@ -1,0 +1,5 @@
+{
+  "title": "count equal ordered pairs",
+  "answer": "O(n²)",
+  "why": "Two full nested loops over the same input: n × n."
+}

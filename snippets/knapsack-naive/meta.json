@@ -1,0 +1,5 @@
+{
+  "title": "0/1 knapsack without memoisation",
+  "answer": "O(2ⁿ)",
+  "why": "Each item is taken or skipped, giving up to 2ⁿ paths. Memoising on (i, cap) would make it pseudo-polynomial."
+}

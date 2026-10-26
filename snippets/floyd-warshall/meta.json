@@ -1,0 +1,5 @@
+{
+  "title": "all-pairs shortest paths",
+  "answer": "O(n³)",
+  "why": "For each of the n intermediate vertices, every one of the n² pairs is relaxed."
+}

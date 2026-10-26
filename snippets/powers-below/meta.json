@@ -1,0 +1,5 @@
+{
+  "title": "powers of two below n",
+  "answer": "O(log n)",
+  "why": "p doubles on every iteration, so it passes n after about log₂ n steps."
+}

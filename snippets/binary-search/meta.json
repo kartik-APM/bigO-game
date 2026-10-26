@@ -1,0 +1,5 @@
+{
+  "title": "binary search",
+  "answer": "O(log n)",
+  "why": "Each comparison discards half of the remaining range."
+}

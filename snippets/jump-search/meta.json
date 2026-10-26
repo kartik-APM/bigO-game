@@ -1,0 +1,5 @@
+{
+  "title": "jump search",
+  "answer": "O(√n)",
+  "why": "There are at most √n jumps of size √n, then at most √n single steps inside one block."
+}

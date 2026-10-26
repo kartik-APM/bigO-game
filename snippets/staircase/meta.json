@@ -1,0 +1,5 @@
+{
+  "title": "build a text staircase",
+  "answer": "O(n²)",
+  "why": "Building a string of i + 1 characters costs O(i) work. Summed over n rows, that is about n² / 2."
+}

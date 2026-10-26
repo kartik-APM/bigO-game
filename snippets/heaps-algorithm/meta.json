@@ -1,0 +1,5 @@
+{
+  "title": "permutations by single swaps",
+  "answer": "O(n!)",
+  "why": "Heap’s algorithm emits each of the n! orderings exactly once, using one swap between consecutive orderings."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "every permutation by slicing",
+  "answer": "O(n!)",
+  "why": "There are n choices for the first slot, n − 1 for the next, and so on: n! orderings. Copying adds a factor of n, but the factorial dominates."
+}

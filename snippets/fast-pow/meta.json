@@ -1,0 +1,5 @@
+{
+  "title": "exponentiation by squaring",
+  "answer": "O(log n)",
+  "why": "The exponent is halved on every pass. Here n is the exponent, and each multiply is treated as constant time."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "schoolbook matrix multiply",
+  "answer": "O(n³)",
+  "why": "Three nested loops, each running n times."
+}

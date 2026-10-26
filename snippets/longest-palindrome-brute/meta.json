@@ -1,0 +1,5 @@
+{
+  "title": "longest palindrome by checking every substring",
+  "answer": "O(n³)",
+  "why": "There are O(n²) substrings, and each is copied and reversed in O(n)."
+}

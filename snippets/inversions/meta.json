@@ -1,0 +1,5 @@
+{
+  "title": "count inversions by brute force",
+  "answer": "O(n²)",
+  "why": "Every pair i < j is compared once: n(n − 1) / 2 comparisons."
+}

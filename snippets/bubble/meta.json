@@ -1,0 +1,5 @@
+{
+  "title": "bubble sort",
+  "answer": "O(n²)",
+  "why": "Up to n passes, each comparing neighbours across the unsorted part."
+}

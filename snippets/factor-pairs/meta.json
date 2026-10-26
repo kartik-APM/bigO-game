@@ -1,0 +1,5 @@
+{
+  "title": "list factor pairs",
+  "answer": "O(√n)",
+  "why": "Each pair (d, n / d) is found from its smaller member, and the smaller member is never above √n."
+}

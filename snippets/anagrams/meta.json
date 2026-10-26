@@ -1,0 +1,5 @@
+{
+  "title": "every rearrangement of a word",
+  "answer": "O(n!)",
+  "why": "The used-flags backtracking builds one string per ordering of the n distinct letters."
+}

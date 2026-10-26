@@ -1,0 +1,5 @@
+{
+  "title": "memoised Fibonacci",
+  "answer": "O(n)",
+  "why": "Each value from 0 to n is computed once and cached. Repeat calls are O(1) lookups."
+}

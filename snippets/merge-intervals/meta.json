@@ -1,0 +1,5 @@
+{
+  "title": "merge overlapping intervals",
+  "answer": "O(n log n)",
+  "why": "Sorting by start time is O(n log n). The merge sweep after it is linear."
+}

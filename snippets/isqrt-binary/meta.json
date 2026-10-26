@@ -1,0 +1,5 @@
+{
+  "title": "integer square root by bisection",
+  "answer": "O(log n)",
+  "why": "This binary-searches over 0..n instead of climbing one step at a time. The answer is √n, but finding it takes log n steps."
+}

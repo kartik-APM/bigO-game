@@ -1,0 +1,5 @@
+{
+  "title": "halve until one",
+  "answer": "O(log n)",
+  "why": "n is cut in half on every pass, so the loop runs about log₂ n times."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "rooms needed for meetings",
+  "answer": "O(n log n)",
+  "why": "Two sorts cost O(n log n). The sweep moves each pointer forward at most n times."
+}

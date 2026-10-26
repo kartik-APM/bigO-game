@@ -1,0 +1,5 @@
+{
+  "title": "three-way partition of 0s, 1s, 2s",
+  "answer": "O(n)",
+  "why": "Each step either moves mid forward or moves hi back, so the gap closes within n steps."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "merge sort",
+  "answer": "O(n log n)",
+  "why": "The input is split log n times, and each level of splitting does O(n) merging work."
+}

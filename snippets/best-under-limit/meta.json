@@ -1,0 +1,5 @@
+{
+  "title": "best subset sum under a limit (bitmask)",
+  "answer": "O(2ⁿ)",
+  "why": "There are 2ⁿ masks, each summed over n bits: n × 2ⁿ. That is still the exponential class."
+}

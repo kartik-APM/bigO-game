@@ -1,0 +1,5 @@
+{
+  "title": "pairwise distance matrix",
+  "answer": "O(n²)",
+  "why": "n points produce an n × n table, with O(1) work per cell."
+}

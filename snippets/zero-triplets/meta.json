@@ -1,0 +1,5 @@
+{
+  "title": "count zero-sum triplets by brute force",
+  "answer": "O(n³)",
+  "why": "Every triple i < j < k is checked: n(n − 1)(n − 2) / 6 combinations."
+}

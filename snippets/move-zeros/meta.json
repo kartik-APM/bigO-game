@@ -1,0 +1,5 @@
+{
+  "title": "move zeros to the end",
+  "answer": "O(n)",
+  "why": "One pass compacts the non-zero values, and a second pass fills the tail with zeros."
+}

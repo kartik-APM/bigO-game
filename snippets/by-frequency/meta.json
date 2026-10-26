@@ -1,0 +1,5 @@
+{
+  "title": "order words by frequency",
+  "answer": "O(n log n)",
+  "why": "Counting is O(n). Sorting up to n distinct words is O(n log n), and that dominates."
+}

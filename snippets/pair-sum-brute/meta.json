@@ -1,0 +1,5 @@
+{
+  "title": "pair sum by brute force",
+  "answer": "O(n²)",
+  "why": "The inner loop starts at i + 1, so the worst case is n(n − 1) / 2 checks. That is still quadratic."
+}

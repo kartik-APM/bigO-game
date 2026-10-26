@@ -1,0 +1,5 @@
+{
+  "title": "merge two sorted lists",
+  "answer": "O(n)",
+  "why": "Every element is copied exactly once. That is O(n + m), which is linear in the total input."
+}

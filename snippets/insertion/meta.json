@@ -1,0 +1,5 @@
+{
+  "title": "insertion sort",
+  "answer": "O(n²)",
+  "why": "In the worst case (reverse-sorted input), step i shifts i items. It is O(n) on input that is already sorted, but Big O here means the worst case."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "sum a list",
+  "answer": "O(n)",
+  "why": "One pass, constant work per element."
+}

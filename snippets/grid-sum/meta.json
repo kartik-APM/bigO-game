@@ -1,0 +1,5 @@
+{
+  "title": "brightness of an n × n image",
+  "answer": "O(n²)",
+  "why": "With n as the side length there are n² pixels. The work is linear in the pixel count, so always state what n means."
+}

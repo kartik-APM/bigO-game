@@ -1,0 +1,5 @@
+{
+  "title": "five-point smoothing",
+  "answer": "O(n)",
+  "why": "The inner loop always runs five times. n × 5 is still O(n)."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "three numbers summing to zero",
+  "answer": "O(n²)",
+  "why": "Sorting is O(n log n), then n two-pointer sweeps of O(n) each, which gives O(n²) overall."
+}

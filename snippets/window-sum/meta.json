@@ -1,0 +1,5 @@
+{
+  "title": "best sliding-window sum",
+  "answer": "O(n)",
+  "why": "The first window costs k ≤ n. After that, each slide adds one value and drops one."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "next greater element (stack)",
+  "answer": "O(n)",
+  "why": "The inner while pops, but each index is pushed once and popped at most once: about 2n operations in total."
+}

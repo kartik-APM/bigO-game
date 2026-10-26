@@ -1,0 +1,5 @@
+{
+  "title": "count runs in a sorted list",
+  "answer": "O(n)",
+  "why": "The inner loop looks nested, but i jumps straight to j, so each index is visited once overall."
+}

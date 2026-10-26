@@ -1,0 +1,5 @@
+{
+  "title": "build the power set",
+  "answer": "O(2ⁿ)",
+  "why": "The output doubles with every item, giving 2ⁿ subsets. Counting the copying it is n × 2ⁿ, but of these choices the class is exponential."
+}

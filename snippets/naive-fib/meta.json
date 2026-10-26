@@ -1,0 +1,5 @@
+{
+  "title": "Fibonacci without memoisation",
+  "answer": "O(2ⁿ)",
+  "why": "Each call makes two more, the depth is n, and nothing is cached. The tight bound is about 1.618ⁿ, which falls in the exponential class."
+}

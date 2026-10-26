@@ -1,0 +1,5 @@
+{
+  "title": "Tower of Hanoi",
+  "answer": "O(2ⁿ)",
+  "why": "There are two recursive calls on n − 1 disks: T(n) = 2T(n − 1) + 1, which is 2ⁿ − 1 moves."
+}

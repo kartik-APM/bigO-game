@@ -1,0 +1,5 @@
+{
+  "title": "balanced brackets",
+  "answer": "O(n)",
+  "why": "Each character is pushed or popped at most once."
+}

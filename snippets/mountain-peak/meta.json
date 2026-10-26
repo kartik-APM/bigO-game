@@ -1,0 +1,5 @@
+{
+  "title": "peak of a mountain array",
+  "answer": "O(log n)",
+  "why": "Comparing mid with its right neighbour shows which half holds the peak, so half the range is dropped each time."
+}

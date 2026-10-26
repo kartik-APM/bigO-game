@@ -1,0 +1,5 @@
+{
+  "title": "number to binary string",
+  "answer": "O(log n)",
+  "why": "One bit is produced per iteration, and n has about log₂ n bits."
+}

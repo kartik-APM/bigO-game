@@ -1,0 +1,5 @@
+{
+  "title": "push and peek",
+  "answer": "O(1)",
+  "why": "Appending to the end of a dynamic array is amortised O(1): occasional resizes are paid for by the many cheap appends."
+}

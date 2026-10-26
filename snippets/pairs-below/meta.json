@@ -1,0 +1,5 @@
+{
+  "title": "count pairs below a limit",
+  "answer": "O(n log n)",
+  "why": "The sort is O(n log n). The two-pointer sweep after it is O(n)."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "maximum subarray (running best)",
+  "answer": "O(n)",
+  "why": "A single pass keeps the best sum ending here and the best sum seen so far."
+}

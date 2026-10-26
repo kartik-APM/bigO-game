@@ -1,0 +1,5 @@
+{
+  "title": "linear search",
+  "answer": "O(n)",
+  "why": "In the worst case the target is last or missing, so every element is checked."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "Fenwick tree prefix sum",
+  "answer": "O(log n)",
+  "why": "Each step clears the lowest set bit of i, and i has at most log n bits."
+}

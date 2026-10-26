@@ -1,0 +1,5 @@
+{
+  "title": "count copies of the maximum",
+  "answer": "O(n)",
+  "why": "Two loops one after the other: n + n = 2n, and the constant drops out."
+}

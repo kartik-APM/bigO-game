@@ -1,0 +1,5 @@
+{
+  "title": "fixed-count loop",
+  "answer": "O(1)",
+  "why": "The loop always runs 100 times. A bound that never depends on n is a constant, however large it is."
+}

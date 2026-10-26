@@ -1,0 +1,5 @@
+{
+  "title": "count divisors",
+  "answer": "O(√n)",
+  "why": "Each divisor d found below √n also gives the partner n / d, so the loop stops at √n."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "longest common subsequence table",
+  "answer": "O(n²)",
+  "why": "It fills an (n + 1) × (m + 1) table with O(1) work per cell. When both strings have length n, that is n²."
+}

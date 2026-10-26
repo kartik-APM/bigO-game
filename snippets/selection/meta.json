@@ -1,0 +1,5 @@
+{
+  "title": "selection sort",
+  "answer": "O(n²)",
+  "why": "Each position scans the rest of the array for its minimum: n + (n − 1) + … + 1."
+}

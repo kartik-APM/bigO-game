@@ -25,25 +25,3 @@ export interface Snippet {
   why: string;
   code: Record<Lang, string>;
 }
-
-export type BaseSnippet = Omit<Snippet, 'code'> & { code: Record<Exclude<Lang, 'cpp'>, string> };
-
-export const clean = (s: string) => s.replace(/^\n/, '').replace(/\s+$/, '');
-
-export function snip(
-  id: string,
-  title: string,
-  answer: ComplexityId,
-  why: string,
-  python: string,
-  javascript: string,
-  java: string,
-): BaseSnippet {
-  return {
-    id,
-    title,
-    answer,
-    why,
-    code: { python: clean(python), javascript: clean(javascript), java: clean(java) },
-  };
-}

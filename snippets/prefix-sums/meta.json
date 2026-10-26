@@ -1,0 +1,5 @@
+{
+  "title": "prefix sums",
+  "answer": "O(n)",
+  "why": "Each entry is built from the one before it in O(1)."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "total digits of 1..n",
+  "answer": "O(n log n)",
+  "why": "The number i has about log₁₀ i digits. Summed over 1..n, that is about n log n."
+}

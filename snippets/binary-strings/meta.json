@@ -1,0 +1,5 @@
+{
+  "title": "every binary string of length n",
+  "answer": "O(2ⁿ)",
+  "why": "Each position branches into \"0\" and \"1\", producing 2ⁿ strings."
+}

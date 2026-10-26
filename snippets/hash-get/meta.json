@@ -1,0 +1,5 @@
+{
+  "title": "hash map lookup",
+  "answer": "O(1)",
+  "why": "A hash lookup jumps straight to a bucket. It is O(1) on average; heavy collisions are the rare exception."
+}

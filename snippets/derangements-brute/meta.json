@@ -1,0 +1,5 @@
+{
+  "title": "count derangements by enumeration",
+  "answer": "O(n!)",
+  "why": "The swap-based search walks the orderings with only a cheap filter at each position. Its worst case is still on the order of n! arrangements."
+}

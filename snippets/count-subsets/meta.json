@@ -1,0 +1,5 @@
+{
+  "title": "count subsets hitting a target",
+  "answer": "O(2ⁿ)",
+  "why": "Every element is either taken or skipped: two branches per level, n levels deep."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "divisor counts by multiples",
+  "answer": "O(n log n)",
+  "why": "The inner loop runs n / d times. n/1 + n/2 + … + n/n = n × H(n), which is about n ln n."
+}

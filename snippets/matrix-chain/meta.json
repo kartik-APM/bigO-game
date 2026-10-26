@@ -1,0 +1,5 @@
+{
+  "title": "matrix-chain order (interval DP)",
+  "answer": "O(n³)",
+  "why": "There are O(n²) intervals, and each tries up to n split points."
+}

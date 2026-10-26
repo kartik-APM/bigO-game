@@ -1,0 +1,5 @@
+{
+  "title": "power-of-two check",
+  "answer": "O(1)",
+  "why": "A single bit trick: a power of two has exactly one set bit, so n & (n - 1) clears it to zero."
+}

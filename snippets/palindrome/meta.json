@@ -1,0 +1,5 @@
+{
+  "title": "palindrome check",
+  "answer": "O(n)",
+  "why": "The two ends move inward, so at most n / 2 comparisons are made."
+}

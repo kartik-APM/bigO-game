@@ -1,0 +1,5 @@
+{
+  "title": "recursive sum by index",
+  "answer": "O(n)",
+  "why": "One call per element, each doing O(1) work: a recursion chain of depth n."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "count decimal digits",
+  "answer": "O(log n)",
+  "why": "Dividing by 10 each pass means the loop runs once per digit, about log₁₀ n times."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "doubling loop inside a linear loop",
+  "answer": "O(n log n)",
+  "why": "There are n outer iterations, and each runs an inner loop that doubles j up to n: n × log n."
+}

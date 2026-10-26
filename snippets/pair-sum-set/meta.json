@@ -1,0 +1,5 @@
+{
+  "title": "pair sum with a set",
+  "answer": "O(n)",
+  "why": "Set lookups are O(1) on average, so one pass is enough. Compare this with the nested-loop version."
+}

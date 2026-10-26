@@ -1,0 +1,5 @@
+{
+  "title": "compute n factorial",
+  "answer": "O(n)",
+  "why": "The result is n!, but computing it takes only n − 1 multiplications (treating each multiply as O(1))."
+}

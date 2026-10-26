@@ -1,0 +1,5 @@
+{
+  "title": "swap first and last",
+  "answer": "O(1)",
+  "why": "A fixed number of reads and writes. No step walks the array."
+}

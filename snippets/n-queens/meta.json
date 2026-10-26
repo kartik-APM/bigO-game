@@ -1,0 +1,5 @@
+{
+  "title": "count N-queens placements",
+  "answer": "O(n!)",
+  "why": "Row 0 has n column choices, row 1 at most n − 1, and so on. Pruning helps in practice, but the bound stays n!."
+}

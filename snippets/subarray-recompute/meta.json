@@ -1,0 +1,5 @@
+{
+  "title": "best subarray, summing each from scratch",
+  "answer": "O(n³)",
+  "why": "There are O(n²) (i, j) ranges, and each one is re-summed in O(n)."
+}

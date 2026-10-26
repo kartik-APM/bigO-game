@@ -1,0 +1,5 @@
+{
+  "title": "sum 1..n by formula",
+  "answer": "O(1)",
+  "why": "A closed-form formula replaces the loop: one multiply and one divide for any n."
+}

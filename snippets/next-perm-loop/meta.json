@@ -1,0 +1,5 @@
+{
+  "title": "step through every ordering",
+  "answer": "O(n!)",
+  "why": "The loop runs once for each distinct ordering, n! of them when the items are distinct. Each step is O(n) on top of that."
+}

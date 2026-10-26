@@ -1,0 +1,5 @@
+{
+  "title": "integer square root by counting",
+  "answer": "O(√n)",
+  "why": "r goes up by one until r² passes n, which takes about √n steps."
+}

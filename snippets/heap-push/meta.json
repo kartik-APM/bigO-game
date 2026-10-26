@@ -1,0 +1,5 @@
+{
+  "title": "binary heap insert",
+  "answer": "O(log n)",
+  "why": "The new value climbs at most the height of the heap, and a binary heap is log n levels tall."
+}

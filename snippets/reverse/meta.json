@@ -1,0 +1,5 @@
+{
+  "title": "reverse in place",
+  "answer": "O(n)",
+  "why": "Two pointers meet in the middle after n / 2 swaps."
+}

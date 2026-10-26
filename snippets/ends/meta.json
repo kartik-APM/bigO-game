@@ -1,0 +1,5 @@
+{
+  "title": "first and last element",
+  "answer": "O(1)",
+  "why": "Two index reads, whatever the length of the array."
+}

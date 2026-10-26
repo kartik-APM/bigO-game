@@ -1,0 +1,5 @@
+{
+  "title": "bitmasks with no adjacent ones",
+  "answer": "O(2ⁿ)",
+  "why": "The loop visits all 2ⁿ masks, and each check is O(1)."
+}

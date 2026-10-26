@@ -1,0 +1,5 @@
+{
+  "title": "n-bit Gray code",
+  "answer": "O(2ⁿ)",
+  "why": "It produces one code for each of the 2ⁿ values, with O(1) work per code."
+}

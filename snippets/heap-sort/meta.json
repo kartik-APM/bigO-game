@@ -1,0 +1,5 @@
+{
+  "title": "sort through a priority queue",
+  "answer": "O(n log n)",
+  "why": "There are n pushes and n pops, and each heap operation costs O(log n)."
+}

@@ -1,0 +1,5 @@
+{
+  "title": "perfect squares up to n",
+  "answer": "O(√n)",
+  "why": "i stops once i² passes n, after about √n iterations."
+}

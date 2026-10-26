@@ -1,0 +1,5 @@
+{
+  "title": "drain a list from the front",
+  "answer": "O(n²)",
+  "why": "Removing the first element of an array-backed list shifts all the remaining elements, and there are n removals. A deque avoids this."
+}

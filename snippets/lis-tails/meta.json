@@ -1,0 +1,5 @@
+{
+  "title": "longest increasing subsequence (tails)",
+  "answer": "O(n log n)",
+  "why": "Each of the n values does one binary search into the tails array."
+}

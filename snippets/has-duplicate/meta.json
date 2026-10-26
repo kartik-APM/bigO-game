@@ -1,0 +1,5 @@
+{
+  "title": "sort, then scan for duplicates",
+  "answer": "O(n log n)",
+  "why": "Sorting costs O(n log n). The scan afterwards is only O(n), so the sort dominates."
+}

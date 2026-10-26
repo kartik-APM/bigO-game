@@ -1,0 +1,5 @@
+{
+  "title": "shortest round trip by brute force",
+  "answer": "O(n!)",
+  "why": "It tries all (n − 1)! orders of the other cities and prices each one in O(n)."
+}

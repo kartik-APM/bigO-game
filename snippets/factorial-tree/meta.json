@@ -1,0 +1,5 @@
+{
+  "title": "n calls to f(n − 1)",
+  "answer": "O(n!)",
+  "why": "T(n) = n × T(n − 1), which unrolls to n × (n − 1) × … × 1 = n!."
+}

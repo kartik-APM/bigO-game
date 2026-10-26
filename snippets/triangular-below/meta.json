@@ -1,0 +1,5 @@
+{
+  "title": "triangular numbers up to n",
+  "answer": "O(√n)",
+  "why": "The k-th triangular number is about k² / 2, so the loop ends after about √(2n) steps."
+}

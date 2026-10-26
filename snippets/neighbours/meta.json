@@ -1,0 +1,5 @@
+{
+  "title": "count live neighbours",
+  "answer": "O(1)",
+  "why": "Exactly eight neighbours are checked for one cell, no matter how big the grid is."
+}

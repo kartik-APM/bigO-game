@@ -1,0 +1,5 @@
+{
+  "title": "search a balanced BST",
+  "answer": "O(log n)",
+  "why": "The search drops one level per step, and a balanced tree is log n levels tall. An unbalanced tree could degrade to O(n)."
+}

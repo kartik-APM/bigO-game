@@ -1,0 +1,5 @@
+{
+  "title": "count triangles in an adjacency matrix",
+  "answer": "O(n³)",
+  "why": "In the worst case (a dense graph), every vertex triple i < j < k is examined."
+}
