@@ -61,6 +61,7 @@ generated `supabase/answers.sql`. Using the Supabase dashboard:
    order:
    - `20261026000100_schema.sql`: tables, row-level security, profile trigger
    - `20261026000200_ranked_runs.sql`: the ranked-run functions
+   - `20261026000300_leaderboard.sql`: the public leaderboard
 2. Paste `supabase/answers.sql` and run it. Run it again whenever a
    `meta.json` changes, after regenerating it with `npm run db:answers`.
 
@@ -84,6 +85,11 @@ signed-in players call over Supabase RPC:
 | `start_run(lang)` | Finishes any active run, shuffles the deck, returns question 1 (4 options, time limit) |
 | `submit_answer(run, n, choice)` | Times the answer on the server (with 300 ms grace for the network), scores it, and returns the answer and explanation plus the next question or the final score. `null` means the timer ran out. Repeating an answered question returns the same result. |
 | `end_run(run)` | Ends a run early, keeping its score |
+| `leaderboard()` | Public. Top 10 players by their best finished run, ignoring flagged and zero-score runs. Shows full Google names, with equal scores sharing a rank. Returns no player ids; `is_me` marks your own row. |
+| `my_best()` | Signed-in only. Your best counted run and your overall rank |
+
+When Supabase is configured, the app adds a `$ leaderboard` section showing the
+top 10, your row marked "· you", and your rank if you're outside the top 10.
 
 The scoring rules in SQL mirror `src/game/engine.ts`; a test checks that both
 give identical points for thousands of inputs. Runs with answers faster than a
@@ -92,8 +98,9 @@ for 10 minutes are finished automatically, and each player can start up to 30
 runs an hour. Errors use PostgREST `PTxyz` codes, so the API responds with
 HTTP status `xyz` (for example `PT429 rate_limited`).
 
-`tests/db.test.ts` and `tests/db-ranked.test.ts` apply the migrations to an
-in-process Postgres ([PGlite](https://pglite.dev)) and check all of the above.
+`tests/db.test.ts`, `tests/db-ranked.test.ts` and `tests/db-leaderboard.test.ts`
+apply the migrations to an in-process Postgres ([PGlite](https://pglite.dev)) and
+check all of the above.
 
 ## Project layout
 
@@ -110,14 +117,15 @@ src/
   game/engine.ts           pure game state: deck, options, timer limits, scoring
   lib/scores.ts            high scores in localStorage
   lib/supabase.ts          Supabase client (null when not configured)
+  lib/leaderboard.ts       leaderboard() and my_best() calls
   auth/AuthProvider.tsx    Google sign-in state for the session bar
-  components/              Hero, Game, CodeView, CheatSheet, Method, Faq, …
+  components/              Hero, Game, CodeView, Leaderboard, CheatSheet, Method, Faq, …
   styles.css               terminal theme (design tokens in :root)
 scripts/check-snippets.mjs compiles every snippet in every language
 scripts/gen-answers-sql.mjs builds supabase/answers.sql from snippet metadata
 supabase/migrations/       database schema, RLS and triggers
 supabase/answers.sql       generated answer key (do not edit by hand)
-tests/                     Vitest suites (snippets, engine, database)
+tests/                     Vitest suites (snippets, engine, database, leaderboard view)
 .github/workflows/ci.yml   runs `check` steps on every push and pull request
 ```
 

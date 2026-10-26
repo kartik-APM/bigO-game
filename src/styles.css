@@ -931,3 +931,28 @@ legend {
     animation: none;
   }
 }
+
+/* leaderboard ----------------------------------------------------------- */
+
+.scores__list li.is-me {
+  color: var(--dp-color-emphasis);
+}
+
+.board__list li {
+  grid-template-columns: 3ch minmax(0, 1fr) 10ch 28ch;
+}
+
+@media (max-width: 800px) {
+  .board__list li {
+    grid-template-columns: 3ch minmax(0, 1fr) 10ch;
+  }
+}
+
+.board__you {
+  color: var(--dp-color-ink-muted);
+}
+
+.board__mine {
+  margin-top: var(--dp-spacing-row-compact);
+  font-size: var(--dp-typography-label);
+}

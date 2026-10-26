@@ -1,11 +1,19 @@
 import { displayName, useAuth } from '../auth/AuthProvider';
 
-const SECTIONS = [
+const BASE_SECTIONS = [
   { href: '#play', label: 'play' },
   { href: '#cheat-sheet', label: 'cheat sheet' },
   { href: '#method', label: 'method' },
   { href: '#faq', label: 'faq' },
 ];
+
+/** Section links; the leaderboard only exists when Supabase is configured. */
+function useSections() {
+  const { enabled } = useAuth();
+  return enabled
+    ? [BASE_SECTIONS[0], { href: '#leaderboard', label: 'leaderboard' }, ...BASE_SECTIONS.slice(1)]
+    : BASE_SECTIONS;
+}
 
 export function BracketLink({ href, label }: { href: string; label: string }) {
   return (
@@ -50,6 +58,7 @@ function Account() {
 }
 
 export function SessionBar() {
+  const sections = useSections();
   return (
     <header className="bar">
       <a className="bar__name" href="#title">
@@ -58,7 +67,7 @@ export function SessionBar() {
       <div className="bar__right">
         <nav aria-label="sections">
           <ul className="bar__nav">
-            {SECTIONS.map((s) => (
+            {sections.map((s) => (
               <li key={s.href}>
                 <BracketLink {...s} />
               </li>
@@ -72,6 +81,7 @@ export function SessionBar() {
 }
 
 export function Footer() {
+  const sections = useSections();
   return (
     <footer className="foot">
       <span className="cmd__num" aria-hidden="true" />
@@ -79,7 +89,7 @@ export function Footer() {
         <div>
           <h2 className="foot__head">./sections</h2>
           <ul>
-            {SECTIONS.map((s) => (
+            {sections.map((s) => (
               <li key={s.href}>
                 <BracketLink {...s} />
               </li>
