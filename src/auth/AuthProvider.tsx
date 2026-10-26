@@ -17,6 +17,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // A failed Google sign-in comes back as ?error_description=… (and/or in the hash)
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const hash = new URLSearchParams(url.hash.slice(1));
+    const description = url.searchParams.get('error_description') ?? hash.get('error_description');
+    if (!description) return;
+    setError(`sign-in failed: ${description}`);
+    for (const key of ['error', 'error_code', 'error_description']) url.searchParams.delete(key);
+    window.history.replaceState(null, '', url.pathname + url.search);
+  }, []);
+
   useEffect(() => {
     if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));

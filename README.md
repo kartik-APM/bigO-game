@@ -13,7 +13,9 @@ below the game.
 - **4 choices per round**: the answer plus three nearby classes, so the wrong
   options are plausible
 - **3 lives**. The timer starts at 15 s and drops 0.5 s each round, down to 7 s.
-- High scores are stored in the browser (`localStorage`); there is no backend.
+- **Practice** runs are scored in the browser, with high scores kept in `localStorage`.
+- **Ranked** runs (optional, after Google sign-in) are timed and scored on the
+  server, and each player's best one appears on a public top-10 leaderboard.
 - Fully keyboard playable: keys `1`–`4` answer, `Enter` moves on.
 
 ## Getting started
@@ -49,8 +51,13 @@ the app runs guest-only and the sign-in link is hidden.
    `VITE_SUPABASE_ANON_KEY` (Project Settings → API). Restart `npm run dev`.
 
 Only the anon (publishable) key belongs in the frontend. Never commit `.env.local`
-or a service-role key. Ranked runs and the shared leaderboard are planned but
-not built yet; high scores are still local to the browser.
+or a service-role key.
+
+Once you're signed in, the start screen offers **ranked** or **practice**. A
+ranked run calls the server for every question; while it waits, the pick shows
+"· checking" and the timer pauses. If a call fails, the game shows the problem
+with a **retry** button, which is safe because the server never scores the same
+answer twice. A failed Google sign-in shows its message in the top bar.
 
 ### Database (for ranked play)
 
@@ -115,9 +122,14 @@ src/
     load-snippets.ts       validates snippet folders and builds the list
     snippets.ts            loads /snippets at build time via import.meta.glob
   game/engine.ts           pure game state: deck, options, timer limits, scoring
+  game/run.ts              the interface both run modes share with the game screens
+  game/useLocalRun.ts      practice runs, backed by engine.ts
+  game/ranked-state.ts     ranked-run state: a pure reducer over server responses
+  game/useRankedRun.ts     ranked runs, backed by start_run / submit_answer / end_run
   lib/scores.ts            high scores in localStorage
   lib/supabase.ts          Supabase client (null when not configured)
   lib/leaderboard.ts       leaderboard() and my_best() calls
+  lib/ranked.ts            ranked-run calls and player-facing error messages
   auth/AuthProvider.tsx    Google sign-in state for the session bar
   components/              Hero, Game, CodeView, Leaderboard, CheatSheet, Method, Faq, …
   styles.css               terminal theme (design tokens in :root)

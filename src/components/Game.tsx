@@ -1,5 +1,6 @@
-import { useEffect, useId, useReducer, useRef, useState } from 'react';
-import { LANGS, type ComplexityId } from '../data/types';
+import { useEffect, useId, useRef, useState } from 'react';
+import { useAuth } from '../auth/AuthProvider';
+import { LANGS, type ComplexityId, type Lang } from '../data/types';
 import {
   BASE_POINTS,
   MAX_MULTIPLIER,
@@ -10,11 +11,11 @@ import {
   START_TIME_MS,
   STREAK_STEP,
   TIME_STEP_MS,
-  currentSnippet,
-  initialState,
   multiplier,
-  reducer,
 } from '../game/engine';
+import type { Mode, RunController } from '../game/run';
+import { useLocalRun } from '../game/useLocalRun';
+import { useRankedRun } from '../game/useRankedRun';
 import { saveScore, type ScoreEntry } from '../lib/scores';
 import { CodeView } from './CodeView';
 import { HighScores } from './HighScores';
@@ -25,41 +26,59 @@ const langLabel = (id: string) => LANGS.find((l) => l.id === id)?.label ?? id;
 interface Props {
   scores: ScoreEntry[];
   onScores: (next: ScoreEntry[]) => void;
+  /** called when a ranked run finishes, so the leaderboard can refresh */
+  onRankedFinished?: () => void;
 }
 
-export function Game({ scores, onScores }: Props) {
-  const [state, dispatch] = useReducer(reducer, undefined, () => initialState());
+export function Game({ scores, onScores, onRankedFinished }: Props) {
+  const { enabled, user, signIn } = useAuth();
+  const canRank = enabled && user !== null;
+  const local = useLocalRun();
+  const ranked = useRankedRun(onRankedFinished);
+  const [lang, setLang] = useState<Lang>('cpp');
+  const [mode, setMode] = useState<Mode>('ranked');
+  const chosen: Mode = canRank ? mode : 'practice';
+  // an active run keeps its engine; otherwise the chosen mode decides
+  const run: RunController =
+    ranked.phase !== 'idle' ? ranked : local.phase !== 'idle' ? local : chosen === 'ranked' ? ranked : local;
+
   const [remaining, setRemaining] = useState(START_TIME_MS);
   const [announcement, setAnnouncement] = useState('');
   const [name, setName] = useState('');
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const interacted = useRef(false);
+  const runRef = useRef(run);
+  runRef.current = run;
+  const timedOutFor = useRef<number | null>(null);
   const startRef = useRef<HTMLButtonElement>(null);
   const questionRef = useRef<HTMLHeadingElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
   const overRef = useRef<HTMLHeadingElement>(null);
   const nameId = useId();
 
-  const { phase } = state;
-  const snippet = phase === 'idle' ? null : currentSnippet(state);
+  const { phase } = run;
+  const accepting = phase === 'question' && !run.busy && !run.error;
 
-  // countdown
+  // countdown; the server keeps its own clock for ranked runs
   useEffect(() => {
-    if (phase !== 'question') return;
+    if (!accepting) return;
     const tick = () => {
-      const left = state.limitMs - (performance.now() - state.startedAt);
+      const left = run.limitMs - (performance.now() - run.startedAt);
       setRemaining(Math.max(0, left));
-      if (left <= 0) dispatch({ type: 'timeout' });
+      if (left <= 0 && timedOutFor.current !== run.startedAt) {
+        timedOutFor.current = run.startedAt;
+        runRef.current.timeout();
+      }
     };
     tick();
     const id = window.setInterval(tick, 100);
     return () => window.clearInterval(id);
-  }, [phase, state.startedAt, state.limitMs]);
+  }, [accepting, run.startedAt, run.limitMs, run.mode]);
 
   // number keys answer while a question is open
-  const { options } = state;
+  const { options } = run;
   useEffect(() => {
-    if (phase !== 'question') return;
+    if (!accepting) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.altKey || e.ctrlKey || e.metaKey) return;
       const el = e.target instanceof Element ? e.target : null;
@@ -67,12 +86,12 @@ export function Game({ scores, onScores }: Props) {
       const idx = Number(e.key) - 1;
       if (Number.isInteger(idx) && idx >= 0 && idx < options.length) {
         e.preventDefault();
-        dispatch({ type: 'answer', choice: options[idx], now: performance.now() });
+        runRef.current.answer(options[idx]);
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [phase, options]);
+  }, [accepting, options]);
 
   // focus follows the run
   useEffect(() => {
@@ -81,36 +100,35 @@ export function Game({ scores, onScores }: Props) {
     else if (phase === 'reveal') nextRef.current?.focus();
     else if (phase === 'over') overRef.current?.focus();
     else startRef.current?.focus();
-  }, [phase, state.pos, state.deck]);
+  }, [phase, run.number, run.mode]);
 
   // spoken result
   useEffect(() => {
-    if (phase !== 'reveal' || !snippet) return;
-    const ok = state.choice === snippet.answer;
-    const lives = `${state.lives} ${state.lives === 1 ? 'life' : 'lives'} left.`;
+    if (phase !== 'reveal' || !run.correctAnswer) return;
+    const ok = run.choice === run.correctAnswer && !run.timedOut;
+    const lives = `${run.lives} ${run.lives === 1 ? 'life' : 'lives'} left.`;
     setAnnouncement(
       ok
-        ? `Correct, plus ${state.gained} points.`
-        : `${state.timedOut ? 'Time is up.' : 'Not quite.'} The answer is ${snippet.answer}. ${lives}`,
+        ? `Correct, plus ${run.gained} points.`
+        : `${run.timedOut ? 'Time is up.' : 'Not quite.'} The answer is ${run.correctAnswer}. ${lives}`,
     );
-  }, [phase, state.answered]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [phase, run.answered]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const start = () => {
+  const start = (lng: Lang = lang) => {
     interacted.current = true;
+    timedOutFor.current = null;
     setSavedAt(null);
     setAnnouncement('');
-    dispatch({ type: 'start', now: performance.now() });
+    run.start(lng);
   };
-  const answer = (choice: ComplexityId) =>
-    dispatch({ type: 'answer', choice, now: performance.now() });
-  const next = () => dispatch({ type: 'next', now: performance.now() });
+  const back = () => {
+    interacted.current = true;
+    setLang(run.lang);
+    run.reset();
+  };
   const end = () => {
     interacted.current = true;
-    dispatch({ type: 'end' });
-  };
-  const reset = () => {
-    interacted.current = true;
-    dispatch({ type: 'reset' });
+    run.end();
   };
 
   const save = (e: React.FormEvent) => {
@@ -119,19 +137,50 @@ export function Game({ scores, onScores }: Props) {
     onScores(
       saveScore({
         name: name.trim().slice(0, 20) || 'anonymous',
-        score: state.score,
-        correct: state.correct,
-        answered: state.answered,
-        lang: state.lang,
+        score: run.score,
+        correct: run.correct,
+        answered: run.answered,
+        lang: run.lang,
         at,
       }),
     );
     setSavedAt(at);
   };
 
+  const errorBlock = run.error && (
+    <div className="run-error" role="alert">
+      <p>{run.error}</p>
+      <div className="actions">
+        {run.retry && (
+          <button type="button" className="btn btn--primary" onClick={run.retry}>
+            retry
+          </button>
+        )}
+        {phase !== 'idle' && phase !== 'over' && run.retry === null && (
+          <button type="button" className="btn" onClick={back}>
+            leave run
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
   if (phase === 'idle') {
     return (
       <div className="game">
+        {canRank && (
+          <fieldset className="langs">
+            <legend className="label muted">mode</legend>
+            <div className="langs__opts">
+              {(['ranked', 'practice'] as const).map((m) => (
+                <button key={m} type="button" className="btn" aria-pressed={mode === m} onClick={() => setMode(m)}>
+                  {m}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        )}
+
         <fieldset className="langs">
           <legend className="label muted">language</legend>
           <div className="langs__opts">
@@ -140,8 +189,8 @@ export function Game({ scores, onScores }: Props) {
                 key={l.id}
                 type="button"
                 className="btn"
-                aria-pressed={state.lang === l.id}
-                onClick={() => dispatch({ type: 'setLang', lang: l.id })}
+                aria-pressed={lang === l.id}
+                onClick={() => setLang(l.id)}
               >
                 {l.label}
               </button>
@@ -150,6 +199,14 @@ export function Game({ scores, onScores }: Props) {
         </fieldset>
 
         <dl className="spec">
+          <div>
+            <dt>mode</dt>
+            <dd>
+              {chosen === 'ranked'
+                ? 'ranked: timed and scored on the server; your best run counts on the leaderboard'
+                : 'practice: scored in this browser; nothing leaves your device'}
+            </dd>
+          </div>
           <div>
             <dt>timer</dt>
             <dd>
@@ -183,47 +240,70 @@ export function Game({ scores, onScores }: Props) {
           </div>
         </dl>
 
+        {enabled && !user && (
+          <p className="game__hint">
+            <span className="muted">Sign in to play ranked runs that count on the leaderboard. </span>
+            <button type="button" className="blink blink--button" onClick={() => void signIn()}>
+              <span aria-hidden="true">[</span>sign in with google<span aria-hidden="true">]</span>
+            </button>
+          </p>
+        )}
+
+        {errorBlock}
+
         <div className="actions">
-          <button ref={startRef} type="button" className="btn btn--primary" onClick={start}>
-            start run
+          <button
+            ref={startRef}
+            type="button"
+            className="btn btn--primary"
+            onClick={() => start()}
+            disabled={run.busy}
+          >
+            {run.busy ? 'starting…' : `start ${chosen} run`}
           </button>
         </div>
 
-        <HighScores scores={scores} />
+        {chosen === 'practice' && <HighScores scores={scores} />}
       </div>
     );
   }
 
   if (phase === 'over') {
+    const isRanked = run.mode === 'ranked';
     return (
       <div className="game">
         <h3 ref={overRef} tabIndex={-1} className="game__head">
-          run complete
+          {isRanked ? 'ranked run complete' : 'run complete'}
         </h3>
         <dl className="spec">
           <div>
             <dt>score</dt>
             <dd>
-              <strong>{state.score.toLocaleString()}</strong>
+              <strong>{run.score.toLocaleString()}</strong>
             </dd>
           </div>
           <div>
             <dt>correct</dt>
             <dd>
-              {state.correct} of {state.answered}
+              {run.correct} of {run.answered}
             </dd>
           </div>
           <div>
             <dt>streak</dt>
-            <dd>best run of {state.bestStreak}</dd>
+            <dd>best run of {run.bestStreak}</dd>
           </div>
           <div>
             <dt>language</dt>
-            <dd>{langLabel(state.lang)}</dd>
+            <dd>{langLabel(run.lang)}</dd>
           </div>
         </dl>
 
-        {savedAt === null ? (
+        {isRanked ? (
+          <p className="save__done">
+            Scored on the server. Your best ranked run counts on the{' '}
+            <a href="#leaderboard">leaderboard</a>.
+          </p>
+        ) : savedAt === null ? (
           <form className="save" onSubmit={save}>
             <label htmlFor={nameId} className="label muted">
               name for the high-score list
@@ -249,27 +329,35 @@ export function Game({ scores, onScores }: Props) {
           </p>
         )}
 
+        {errorBlock}
+
         <div className="actions">
-          <button type="button" className="btn btn--primary" onClick={start}>
-            play again
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={() => start(run.lang)}
+            disabled={run.busy}
+          >
+            {run.busy ? 'starting…' : 'play again'}
           </button>
-          <button type="button" className="btn" onClick={reset}>
+          <button type="button" className="btn" onClick={back}>
             change language
           </button>
         </div>
 
-        <HighScores scores={scores} highlight={savedAt} />
+        {!isRanked && <HighScores scores={scores} highlight={savedAt} />}
       </div>
     );
   }
 
   // question or reveal
-  const s = snippet!;
+  const s = run.snippet;
   const revealing = phase === 'reveal';
-  const ok = revealing && state.choice === s.answer;
-  const shown = revealing ? 0 : Math.min(remaining, state.limitMs);
-  const filled = Math.max(0, Math.min(BAR_WIDTH, Math.ceil((shown / state.limitMs) * BAR_WIDTH)));
-  const low = !revealing && shown < 3000;
+  const ok = revealing && run.choice !== null && run.choice === run.correctAnswer && !run.timedOut;
+  const shown = revealing || run.busy ? 0 : Math.min(remaining, run.limitMs);
+  const filled = Math.max(0, Math.min(BAR_WIDTH, Math.ceil((shown / run.limitMs) * BAR_WIDTH)));
+  const low = accepting && shown < 3000;
+  const timeText = revealing ? 'paused' : run.busy ? 'checking' : `${(shown / 1000).toFixed(1)}s`;
 
   return (
     <div className="game">
@@ -277,19 +365,19 @@ export function Game({ scores, onScores }: Props) {
         <div>
           <dt>score</dt>
           <dd>
-            <strong>{state.score.toLocaleString()}</strong>
+            <strong>{run.score.toLocaleString()}</strong>
           </dd>
         </div>
         <div>
           <dt>streak</dt>
           <dd>
-            {state.streak} · ×{multiplier(state.streak)}
+            {run.streak} · ×{multiplier(run.streak)}
           </dd>
         </div>
         <div>
           <dt>lives</dt>
           <dd>
-            {state.lives}/{START_LIVES}
+            {run.lives}/{START_LIVES}
           </dd>
         </div>
         <div className={`hud__time${low ? ' is-low' : ''}`}>
@@ -299,65 +387,77 @@ export function Game({ scores, onScores }: Props) {
               [{'#'.repeat(filled)}
               {'.'.repeat(BAR_WIDTH - filled)}]
             </span>{' '}
-            {revealing ? 'paused' : `${(shown / 1000).toFixed(1)}s`}
+            {timeText}
           </dd>
         </div>
       </dl>
 
       <h3 ref={questionRef} tabIndex={-1} className="game__head">
-        snippet {state.answered + (revealing ? 0 : 1)}{' '}
-        <span className="muted">· {langLabel(state.lang)}</span>
+        snippet {run.number} <span className="muted">· {langLabel(run.lang)}</span>
+        {run.mode === 'ranked' && <span className="muted"> · ranked</span>}
       </h3>
 
-      <CodeView code={s.code[state.lang]} lang={langLabel(state.lang)} />
+      {s && <CodeView code={s.code[run.lang]} lang={langLabel(run.lang)} />}
 
-      <fieldset className="answers">
-        <legend className="label muted">
-          pick the time complexity · keys 1–{options.length}
-        </legend>
-        <div className="answers__grid">
-          {options.map((id, i) => {
-            const isAnswer = revealing && id === s.answer;
-            const isWrong = revealing && id === state.choice && !ok;
-            return (
-              <button
-                key={id}
-                type="button"
-                className={`btn answers__btn${isAnswer ? ' is-answer' : ''}${isWrong ? ' is-wrong' : ''}`}
-                disabled={revealing}
-                aria-keyshortcuts={String(i + 1)}
-                onClick={() => answer(id)}
-              >
-                <span className="answers__key" aria-hidden="true">
-                  {i + 1}
-                </span>
-                <span>
-                  {id}
-                  {isAnswer && <span className="answers__tag"> · answer</span>}
-                  {isWrong && <span className="answers__tag"> · your pick</span>}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
+      {s && (
+        <fieldset className="answers">
+          <legend className="label muted">
+            pick the time complexity · keys 1–{options.length}
+          </legend>
+          <div className="answers__grid">
+            {options.map((id: ComplexityId, i) => {
+              const isAnswer = revealing && id === run.correctAnswer;
+              const isWrong = revealing && id === run.choice && id !== run.correctAnswer;
+              const checking = run.busy && id === run.choice;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  className={`btn answers__btn${isAnswer ? ' is-answer' : ''}${isWrong ? ' is-wrong' : ''}`}
+                  disabled={!accepting}
+                  aria-keyshortcuts={String(i + 1)}
+                  onClick={() => run.answer(id)}
+                >
+                  <span className="answers__key" aria-hidden="true">
+                    {i + 1}
+                  </span>
+                  <span>
+                    {id}
+                    {isAnswer && <span className="answers__tag"> · answer</span>}
+                    {isWrong && <span className="answers__tag"> · your pick</span>}
+                    {checking && <span className="answers__tag"> · checking</span>}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+      )}
+
+      {run.busy && phase === 'question' && (
+        <p className="muted run-status" role="status">
+          checking your answer…
+        </p>
+      )}
+
+      {errorBlock}
 
       {revealing && (
         <div className="verdict">
           <p>
             <strong>
-              {ok ? `correct · +${state.gained}` : state.timedOut ? 'time is up' : 'not quite'}
+              {ok ? `correct · +${run.gained}` : run.timedOut ? 'time is up' : 'not quite'}
             </strong>
-            {!ok && <> · the answer is {s.answer}</>}
+            {!ok && <> · the answer is {run.correctAnswer}</>}
           </p>
-          <p className="muted">{s.title}</p>
-          <p>{s.why}</p>
+          <p className="muted">{run.title}</p>
+          <p>{run.why}</p>
           <div className="actions">
-            <button ref={nextRef} type="button" className="btn btn--primary" onClick={next}>
-              {state.lives > 0 ? 'next snippet' : 'see results'}
+            <button ref={nextRef} type="button" className="btn btn--primary" onClick={run.next}>
+              {run.lives > 0 ? 'next snippet' : 'see results'}
             </button>
-            {state.lives > 0 && (
-              <button type="button" className="btn" onClick={end}>
+            {run.lives > 0 && (
+              <button type="button" className="btn" onClick={end} disabled={run.busy}>
                 end run
               </button>
             )}
@@ -367,7 +467,7 @@ export function Game({ scores, onScores }: Props) {
 
       {!revealing && (
         <div className="actions actions--quiet">
-          <button type="button" className="btn" onClick={end}>
+          <button type="button" className="btn" onClick={end} disabled={run.busy}>
             end run
           </button>
         </div>

@@ -9,6 +9,7 @@ import { Hero } from './components/Hero';
 import { Leaderboard } from './components/Leaderboard';
 import { Method } from './components/Method';
 import { loadScores } from './lib/scores';
+import { useMyBest } from './lib/useMyBest';
 
 interface Section {
   id: string;
@@ -19,15 +20,23 @@ interface Section {
 
 export default function App() {
   const [scores, setScores] = useState(loadScores);
-  const { enabled: online } = useAuth();
-  const best = scores[0]?.score ?? null;
+  const [boardVersion, setBoardVersion] = useState(0);
+  const { enabled: online, user } = useAuth();
+  const practiceBest = scores[0]?.score ?? null;
+  const rankedBest = useMyBest(boardVersion);
 
   const sections: Section[] = [
     {
       id: 'play',
       name: 'play',
       summary: 'Pick a language and start a run. The clock tightens as you go.',
-      body: <Game scores={scores} onScores={setScores} />,
+      body: (
+        <Game
+          scores={scores}
+          onScores={setScores}
+          onRankedFinished={() => setBoardVersion((v) => v + 1)}
+        />
+      ),
     },
     ...(online
       ? [
@@ -35,7 +44,7 @@ export default function App() {
             id: 'leaderboard',
             name: 'leaderboard',
             summary: 'The top 10 ranked players. Each player’s best run counts once.',
-            body: <Leaderboard />,
+            body: <Leaderboard version={boardVersion} />,
           },
         ]
       : []),
@@ -61,7 +70,7 @@ export default function App() {
       </a>
       <SessionBar />
       <main id="main">
-        <Hero best={best} />
+        <Hero practiceBest={practiceBest} signedIn={online && user !== null} rankedBest={rankedBest} />
         {sections.map((s, i) => (
           <Command key={s.id} n={i + 1} id={s.id} name={s.name} summary={s.summary}>
             {s.body}

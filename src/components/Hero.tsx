@@ -2,9 +2,18 @@ import { COMPLEXITIES } from '../data/complexities';
 import { LANGS } from '../data/types';
 import { SNIPPETS } from '../data/snippets';
 import { START_LIVES } from '../game/engine';
+import type { MyBest } from '../lib/leaderboard';
 import { Wordmark } from './Wordmark';
 
-export function Hero({ best }: { best: number | null }) {
+interface Props {
+  /** best practice score saved in this browser */
+  practiceBest: number | null;
+  /** when signed in, the ranked best replaces the practice best */
+  signedIn: boolean;
+  rankedBest: MyBest | null;
+}
+
+export function Hero({ practiceBest, signedIn, rankedBest }: Props) {
   return (
     <section className="hero" aria-labelledby="title">
       <span className="cmd__num" aria-hidden="true" />
@@ -46,10 +55,25 @@ export function Hero({ best }: { best: number | null }) {
             <dt>lives</dt>
             <dd>{START_LIVES}</dd>
           </div>
-          <div>
-            <dt>your best</dt>
-            <dd>{best === null ? '–' : <strong>{best.toLocaleString()}</strong>}</dd>
-          </div>
+          {signedIn ? (
+            <div>
+              <dt>ranked best</dt>
+              <dd>
+                {rankedBest === null ? (
+                  '–'
+                ) : (
+                  <>
+                    <strong>{rankedBest.score.toLocaleString()}</strong> · #{rankedBest.rank}
+                  </>
+                )}
+              </dd>
+            </div>
+          ) : (
+            <div>
+              <dt>your best</dt>
+              <dd>{practiceBest === null ? '–' : <strong>{practiceBest.toLocaleString()}</strong>}</dd>
+            </div>
+          )}
         </dl>
       </div>
     </section>

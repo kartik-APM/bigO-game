@@ -83,8 +83,8 @@ export function LeaderboardView({ state, signedIn, onRefresh }: ViewProps) {
   );
 }
 
-/** Loads the public top 10, plus the caller's own best when signed in. */
-export function Leaderboard() {
+/** Loads the public top 10, plus the caller's own best when signed in. Reloads when `version` changes. */
+export function Leaderboard({ version = 0 }: { version?: number }) {
   const { user } = useAuth();
   const [state, setState] = useState<BoardState>({ status: 'loading' });
 
@@ -100,7 +100,7 @@ export function Leaderboard() {
 
   useEffect(() => {
     void load();
-  }, [load]);
+  }, [load, version]);
 
   return <LeaderboardView state={state} signedIn={user !== null} onRefresh={() => void load()} />;
 }

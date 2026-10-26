@@ -956,3 +956,21 @@ legend {
   margin-top: var(--dp-spacing-row-compact);
   font-size: var(--dp-typography-label);
 }
+
+/* ranked runs ----------------------------------------------------------- */
+
+.game__hint {
+  margin-top: var(--dp-spacing-row);
+}
+
+.run-status {
+  margin-top: var(--dp-spacing-row-compact);
+}
+
+.run-error {
+  max-width: 72ch;
+  margin-top: var(--dp-spacing-row);
+  padding-top: var(--dp-spacing-row-compact);
+  border-top: var(--dp-border-hairline) solid var(--dp-color-emphasis);
+  color: var(--dp-color-emphasis);
+}
