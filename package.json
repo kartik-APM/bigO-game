@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "check:snippets": "node scripts/check-snippets.mjs",
-    "check": "npm run typecheck && npm test && npm run check:snippets && npm run build"
+    "check": "npm run typecheck && npm test && npm run check:snippets && npm run db:answers:check && npm run build",
+    "db:answers": "node scripts/gen-answers-sql.mjs",
+    "db:answers:check": "node scripts/gen-answers-sql.mjs --check"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.3.0",
@@ -19,6 +21,8 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.11",
+    "@types/node": "^20.19.43",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^4.7.0",

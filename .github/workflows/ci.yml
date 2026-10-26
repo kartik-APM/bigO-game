@@ -30,4 +30,6 @@ jobs:
       - run: npm test
       - name: Compile every snippet (C++, Java, Python, JavaScript)
         run: npm run check:snippets
+      - name: Answer key SQL is in sync with snippets
+        run: npm run db:answers:check
       - run: npm run build

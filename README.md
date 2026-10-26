@@ -32,7 +32,8 @@ npm run dev        # http://localhost:5173
 | `npm run preview`        | Serve the production build                                         |
 | `npm test`               | Unit tests (Vitest): snippet library, loader, game engine          |
 | `npm run check:snippets` | Compile every snippet with clang++/g++, javac, Python and Node     |
-| `npm run check`          | All of the above: typecheck, tests, snippet checks, build          |
+| `npm run db:answers`     | Regenerate `supabase/answers.sql` from `snippets/*/meta.json`      |
+| `npm run check`          | All of the above: typecheck, tests, snippet checks, answer-key sync, build |
 
 ## Sign in (optional)
 
@@ -50,6 +51,31 @@ the app runs guest-only and the sign-in link is hidden.
 Only the anon (publishable) key belongs in the frontend. Never commit `.env.local`
 or a service-role key. Ranked runs and the shared leaderboard are planned but
 not built yet; high scores are still local to the browser.
+
+### Database (for ranked play)
+
+The schema lives in `supabase/migrations/`, and the answer key in the
+generated `supabase/answers.sql`. Using the Supabase dashboard:
+
+1. Open **SQL Editor**, paste `supabase/migrations/20261026000100_schema.sql`
+   and run it once.
+2. Paste `supabase/answers.sql` and run it. Run it again whenever a
+   `meta.json` changes, after regenerating it with `npm run db:answers`.
+
+What the schema enforces:
+
+- Every signed-in user gets a `profiles` row (Google name and avatar),
+  created by a trigger.
+- Players can read only their own `runs` and `run_questions`. Nobody can
+  read `snippet_answers` from the client. No table accepts writes from the
+  client; ranked play will write only through server-side functions.
+- One active run per player. Scores, lives and status are checked by
+  constraints.
+- Removing a snippet that past runs used makes `answers.sql` fail without
+  changing anything, so run history is never orphaned.
+
+`tests/db.test.ts` applies the migration to an in-process Postgres
+([PGlite](https://pglite.dev)) and checks all of the above.
 
 ## Project layout
 
@@ -70,7 +96,10 @@ src/
   components/              Hero, Game, CodeView, CheatSheet, Method, Faq, …
   styles.css               terminal theme (design tokens in :root)
 scripts/check-snippets.mjs compiles every snippet in every language
-tests/                     Vitest suites
+scripts/gen-answers-sql.mjs builds supabase/answers.sql from snippet metadata
+supabase/migrations/       database schema, RLS and triggers
+supabase/answers.sql       generated answer key (do not edit by hand)
+tests/                     Vitest suites (snippets, engine, database)
 .github/workflows/ci.yml   runs `check` steps on every push and pull request
 ```
 
