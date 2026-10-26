@@ -34,6 +34,23 @@ npm run dev        # http://localhost:5173
 | `npm run check:snippets` | Compile every snippet with clang++/g++, javac, Python and Node     |
 | `npm run check`          | All of the above: typecheck, tests, snippet checks, build          |
 
+## Sign in (optional)
+
+Google sign-in through [Supabase](https://supabase.com) is optional. Without it
+the app runs guest-only and the sign-in link is hidden.
+
+1. Create a Supabase project. In Authentication → Providers → Google, enable
+   Google with a Google Cloud OAuth client of type "Web application". Its
+   authorised redirect URI is `https://<project-ref>.supabase.co/auth/v1/callback`.
+2. In Supabase Authentication → URL Configuration, set the Site URL to your
+   deployed URL. Add `http://localhost:5173` as a redirect URL.
+3. Copy `.env.example` to `.env.local` and fill in `VITE_SUPABASE_URL` and
+   `VITE_SUPABASE_ANON_KEY` (Project Settings → API). Restart `npm run dev`.
+
+Only the anon (publishable) key belongs in the frontend. Never commit `.env.local`
+or a service-role key. Ranked runs and the shared leaderboard are planned but
+not built yet; high scores are still local to the browser.
+
 ## Project layout
 
 ```
@@ -48,6 +65,8 @@ src/
     snippets.ts            loads /snippets at build time via import.meta.glob
   game/engine.ts           pure game state: deck, options, timer limits, scoring
   lib/scores.ts            high scores in localStorage
+  lib/supabase.ts          Supabase client (null when not configured)
+  auth/AuthProvider.tsx    Google sign-in state for the session bar
   components/              Hero, Game, CodeView, CheatSheet, Method, Faq, …
   styles.css               terminal theme (design tokens in :root)
 scripts/check-snippets.mjs compiles every snippet in every language

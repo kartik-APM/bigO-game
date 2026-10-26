@@ -221,6 +221,42 @@ a:hover {
   text-decoration: none;
 }
 
+.blink--button {
+  appearance: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: var(--dp-radius-control);
+  cursor: pointer;
+}
+
+.blink--button:hover {
+  background: var(--dp-color-ink);
+  color: var(--dp-color-ground);
+}
+
+.bar__right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: var(--dp-spacing-inset) var(--dp-spacing-column-gap);
+}
+
+.bar__account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--dp-spacing-cell);
+}
+
+.bar__error {
+  flex-basis: 100%;
+  color: var(--dp-color-emphasis);
+}
+
 /* command / output ------------------------------------------------------ */
 
 .hero,

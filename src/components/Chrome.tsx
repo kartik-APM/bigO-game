@@ -1,3 +1,5 @@
+import { displayName, useAuth } from '../auth/AuthProvider';
+
 const SECTIONS = [
   { href: '#play', label: 'play' },
   { href: '#cheat-sheet', label: 'cheat sheet' },
@@ -15,21 +17,56 @@ export function BracketLink({ href, label }: { href: string; label: string }) {
   );
 }
 
+function BracketButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button type="button" className="blink blink--button" onClick={onClick}>
+      <span aria-hidden="true">[</span>
+      {label}
+      <span aria-hidden="true">]</span>
+    </button>
+  );
+}
+
+function Account() {
+  const { enabled, user, error, signIn, signOut } = useAuth();
+  if (!enabled) return null;
+  return (
+    <div className="bar__account">
+      {user ? (
+        <>
+          <span className="muted">{displayName(user)}</span>
+          <BracketButton label="sign out" onClick={signOut} />
+        </>
+      ) : (
+        <BracketButton label="sign in with google" onClick={signIn} />
+      )}
+      {error && (
+        <p className="bar__error" role="status">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export function SessionBar() {
   return (
     <header className="bar">
       <a className="bar__name" href="#title">
         bigo-drill
       </a>
-      <nav aria-label="sections">
-        <ul className="bar__nav">
-          {SECTIONS.map((s) => (
-            <li key={s.href}>
-              <BracketLink {...s} />
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <div className="bar__right">
+        <nav aria-label="sections">
+          <ul className="bar__nav">
+            {SECTIONS.map((s) => (
+              <li key={s.href}>
+                <BracketLink {...s} />
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <Account />
+      </div>
     </header>
   );
 }
